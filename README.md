@@ -150,6 +150,21 @@ mkdir dsvgoapp-data 2>nul & docker run --rm -p 3000:3000 -v "%cd%\dsvgoapp-data:
 
 Then open **http://localhost:3000** in the browser.
 
+## Demo-Daten (Deutsch)
+
+Die Datei [`scripts/demo-verzeichnis-de.json`](scripts/demo-verzeichnis-de.json) enthält **6 fiktive Verantwortliche** und **20 realistische Verarbeitungstätigkeiten** (u. a. IT/Support & HR, Onlinehandel, Kanzlei, Arztpraxis, Sportverein, Logistik). Namen und Adressen sind **frei erfundene Demodaten**, keine Abbilder realer Personen oder Betriebe.
+
+**Import (überschreibt die lokale Datenbank):** App / Container stoppen, dann:
+
+```bash
+# optional: Backup der bisherigen Datei
+cp data/verzeichnis.json data/verzeichnis.json.bak 2>/dev/null || true
+
+cp scripts/demo-verzeichnis-de.json data/verzeichnis.json
+```
+
+Danach `npm run dev` oder Container erneut starten. Im Docker-Setup muss die kopierte Datei im gemounteten Verzeichnis liegen (z. B. `./dsvgoapp-data/verzeichnis.json`).
+
 ## Source repository (Git)
 
 Upstream: **https://github.com/AndiPostl/dsvgoapp**

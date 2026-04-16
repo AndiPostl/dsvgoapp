@@ -1,0 +1,21 @@
+# dependencies
+node_modules
+npm-debug.log*
+
+# build output (rebuilt in image)
+.next
+out
+
+# git / IDE
+.git
+.cursor
+.vscode
+
+# local data (mount at runtime)
+data/*.json
+data/*.migrated
+
+# misc
+.DS_Store
+.env*
+*.pem

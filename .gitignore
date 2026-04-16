@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local GDPR record (Art. 30)
+/data/verzeichnis.json
+/data/processing-activities.json

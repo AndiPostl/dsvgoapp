@@ -1,0 +1,12 @@
+services:
+  dsvgoapp:
+    image: dsvgoapp:0.1
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      # Persists Art. 30 Verzeichnis (JSON) across restarts
+      - dsvgoapp-data:/app/data
+
+volumes:
+  dsvgoapp-data:

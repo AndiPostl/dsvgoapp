@@ -10,6 +10,7 @@ import {
   type ProcessingActivityUpdate,
   type TomMeasureId,
 } from "./types";
+import defaultSeedJson from "./seed-verzeichnis-de.json";
 
 const TOM_MEASURE_SET = new Set<string>(TOM_MEASURE_OPTIONS);
 
@@ -32,6 +33,10 @@ export type DataStore = {
   controllers: Controller[];
   activities: ProcessingActivity[];
 };
+
+function defaultDatastoreFromSeed(): DataStore {
+  return structuredClone(defaultSeedJson as DataStore);
+}
 
 function isController(x: unknown): x is Controller {
   if (typeof x !== "object" || x === null) return false;
@@ -214,9 +219,9 @@ export async function readDatastore(): Promise<DataStore> {
   const file = await readRawFile();
 
   if (file === undefined) {
-    const empty: DataStore = { controllers: [], activities: [] };
-    await writeDatastore(empty);
-    return empty;
+    const seed = defaultDatastoreFromSeed();
+    await writeDatastore(seed);
+    return seed;
   }
 
   const { raw, sourcePath } = file;

@@ -89,19 +89,35 @@ Image name on Hub: **`andreaspostl/dsvgoapp:0.1`** (same as `docker.io/andreaspo
    podman login registry-1.docker.io
    ```
 
-   Other common causes: image namespace **does not match** your Hub user (e.g. you are logged in as `apostl` but the script pushes to `andreaspostl/dsvgoapp` — use `REGISTRY=docker.io/apostl ./scripts/docker-push.sh`), or you are not a **collaborator** on an organization namespace.
+   Other common causes: image namespace **does not match** your Hub user (e.g. you are logged in as `apostl` but the script pushes to `andreaspostl/dsvgoapp` — use `REGISTRY=docker.io/apostl ./scripts/docker-push.sh push`), or you are not a **collaborator** on an organization namespace.
 
-2. Build, tag, and push (script uses **Podman** if installed, otherwise **Docker**):
+2. **Helper script** [`scripts/docker-push.sh`](scripts/docker-push.sh) (uses **Podman** if installed, otherwise **Docker**). With **no arguments** it prints all commands:
 
    ```bash
    chmod +x scripts/docker-push.sh   # once
-   ./scripts/docker-push.sh
+   ./scripts/docker-push.sh           # same as: ./scripts/docker-push.sh help
    ```
 
-   The default registry is **`docker.io/andreaspostl`**. To push under another user:
+   Typical commands:
+
+   | Command | Meaning |
+   |---------|--------|
+   | `help` | Show usage (default when no args) |
+   | `build` | Build image `dsvgoapp:0.1` |
+   | `run` | Run container (port `PORT`, data dir `DATA_DIR`; defaults: 3000 and `./dsvgoapp-data`) |
+   | `build_run` | `build` then `run` |
+   | `push` | `build`, tag as `${REGISTRY}/dsvgoapp:0.1`, `push` (requires login) |
+
+   Push to Docker Hub (default registry **`docker.io/andreaspostl`**):
 
    ```bash
-   REGISTRY=docker.io/otheruser ./scripts/docker-push.sh
+   ./scripts/docker-push.sh push
+   ```
+
+   Push under another namespace:
+
+   ```bash
+   REGISTRY=docker.io/otheruser ./scripts/docker-push.sh push
    ```
 
 3. Manual equivalent:
@@ -152,18 +168,16 @@ Then open **http://localhost:3000** in the browser.
 
 ## Demo-Daten (Deutsch)
 
-Die Datei [`scripts/demo-verzeichnis-de.json`](scripts/demo-verzeichnis-de.json) enthält **6 fiktive Verantwortliche** und **20 realistische Verarbeitungstätigkeiten** (u. a. IT/Support & HR, Onlinehandel, Kanzlei, Arztpraxis, Sportverein, Logistik). Namen und Adressen sind **frei erfundene Demodaten**, keine Abbilder realer Personen oder Betriebe.
+Beim **ersten Start** (wenn `data/verzeichnis.json` noch nicht existiert) legt die App automatisch die **Demo-Stammdaten** an: **6 fiktive Verantwortliche** und **20 Verarbeitungstätigkeiten** (Quelle: [`lib/seed-verzeichnis-de.json`](lib/seed-verzeichnis-de.json)). Es handelt sich um **frei erfundene Demodaten**, keine Abbilder realer Personen oder Betriebe.
 
-**Import (überschreibt die lokale Datenbank):** App / Container stoppen, dann:
+**Demo erneut einspielen** (überschreibt die bestehende Datei — App / Container stoppen):
 
 ```bash
-# optional: Backup der bisherigen Datei
 cp data/verzeichnis.json data/verzeichnis.json.bak 2>/dev/null || true
-
-cp scripts/demo-verzeichnis-de.json data/verzeichnis.json
+cp lib/seed-verzeichnis-de.json data/verzeichnis.json
 ```
 
-Danach `npm run dev` oder Container erneut starten. Im Docker-Setup muss die kopierte Datei im gemounteten Verzeichnis liegen (z. B. `./dsvgoapp-data/verzeichnis.json`).
+Danach `npm run dev` oder Container neu starten. Unter Docker/Podman die Datei im gemounteten Datenverzeichnis ersetzen (z. B. `./dsvgoapp-data/verzeichnis.json`).
 
 ## Source repository (Git)
 
@@ -181,7 +195,7 @@ SSH clone: `git@github.com:AndiPostl/dsvgoapp.git`.
 ## Project layout (high level)
 
 - `app/` — Next.js App Router (UI + API routes)
-- `lib/` — types and JSON file store
+- `lib/` — types, store, and bundled default [`seed-verzeichnis-de.json`](lib/seed-verzeichnis-de.json) (German demo data)
 - `data/` — runtime data directory (`verzeichnis.json`; not committed for real data)
 - `Dockerfile` — production image
 - `docker-compose.yml` — optional local stack with a volume

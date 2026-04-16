@@ -114,12 +114,41 @@ Image name on Hub: **`andreaspostl/dsvgoapp:0.1`** (same as `docker.io/andreaspo
 
 ### Pull and run from Docker Hub
 
-```bash
-podman pull docker.io/andreaspostl/dsvgoapp:0.1
+No `git pull` is required if you only run the **image** from Docker Hub; the engine pulls layers as needed.
 
-mkdir -p ./dsvgoapp-data
-podman run --rm -p 3000:3000 -v "$(pwd)/dsvgoapp-data:/app/data" docker.io/andreaspostl/dsvgoapp:0.1
+#### macOS (Terminal) — one line
+
+**Podman** (if you use it):
+
+```bash
+mkdir -p ./dsvgoapp-data && podman run --rm -p 3000:3000 -v "$(pwd)/dsvgoapp-data:/app/data" docker.io/andreaspostl/dsvgoapp:0.1
 ```
+
+**Docker** — same command with `docker` instead of `podman`:
+
+```bash
+mkdir -p ./dsvgoapp-data && docker run --rm -p 3000:3000 -v "$(pwd)/dsvgoapp-data:/app/data" docker.io/andreaspostl/dsvgoapp:0.1
+```
+
+Then open **http://localhost:3000**.
+
+#### Windows — one line
+
+Use **Docker Desktop** (Linux containers) and **PowerShell**:
+
+```powershell
+New-Item -ItemType Directory -Force -Path dsvgoapp-data | Out-Null; docker run --rm -p 3000:3000 -v "${PWD}/dsvgoapp-data:/app/data" docker.io/andreaspostl/dsvgoapp:0.1
+```
+
+**Command Prompt (`cmd.exe`):**
+
+```cmd
+mkdir dsvgoapp-data 2>nul & docker run --rm -p 3000:3000 -v "%cd%\dsvgoapp-data:/app/data" docker.io/andreaspostl/dsvgoapp:0.1
+```
+
+**Git Bash on Windows** can use the same one-liner as macOS with `docker` (or `podman` if installed).
+
+Then open **http://localhost:3000** in the browser.
 
 ## Source repository (Git)
 

@@ -76,11 +76,20 @@ Data is stored in the named volume `dsvgoapp-data`. List volumes: `podman volume
 
 Image name on Hub: **`andreaspostl/dsvgoapp:0.1`** (same as `docker.io/andreaspostl/dsvgoapp:0.1`).
 
-1. Log in to Docker Hub (use your Hub username; password can be an [access token](https://hub.docker.com/settings/security)):
+1. Log in to Docker Hub (use your **Docker Hub username** — the segment in `hub.docker.com/u/<username>`; password can be an [access token](https://hub.docker.com/settings/security)):
 
    ```bash
    podman login docker.io
+   podman login --get-login docker.io   # should print the same user as in the image (e.g. andreaspostl)
    ```
+
+   If `podman push` fails with **“requested access to the resource is denied”** while **checking / reusing a blob**, Docker Hub often still needs credentials on the **registry** host Podman talks to. Log in there too (same username and token/password):
+
+   ```bash
+   podman login registry-1.docker.io
+   ```
+
+   Other common causes: image namespace **does not match** your Hub user (e.g. you are logged in as `apostl` but the script pushes to `andreaspostl/dsvgoapp` — use `REGISTRY=docker.io/apostl ./scripts/docker-push.sh`), or you are not a **collaborator** on an organization namespace.
 
 2. Build, tag, and push (script uses **Podman** if installed, otherwise **Docker**):
 

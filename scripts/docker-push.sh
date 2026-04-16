@@ -1,12 +1,31 @@
 #!/usr/bin/env sh
-# Usage: REGISTRY=ghcr.io/youruser ./scripts/docker-push.sh
+# Build and push dsvgoapp:0.1 (Podman or Docker).
+#
+# Usage:
+#   podman login docker.io
+#   ./scripts/docker-push.sh
+#
+# Override registry namespace:
+#   REGISTRY=docker.io/otheruser ./scripts/docker-push.sh
+
 set -eu
-if [ -z "${REGISTRY:-}" ]; then
-  echo "Set REGISTRY, e.g. REGISTRY=ghcr.io/youruser or REGISTRY=docker.io/youruser" >&2
-  exit 1
+
+if command -v podman >/dev/null 2>&1; then
+  CTR=podman
+else
+  CTR=docker
 fi
+
+REGISTRY="${REGISTRY:-docker.io/andreaspostl}"
+# Normalize: Docker Hub allows docker.io/user or user/ for the same namespace
+case "$REGISTRY" in
+  */*) ;;
+  *) REGISTRY="docker.io/${REGISTRY}" ;;
+esac
+
 cd "$(dirname "$0")/.."
-docker build -t dsvgoapp:0.1 .
-docker tag dsvgoapp:0.1 "${REGISTRY}/dsvgoapp:0.1"
-docker push "${REGISTRY}/dsvgoapp:0.1"
+echo "Using: $CTR → ${REGISTRY}/dsvgoapp:0.1"
+"$CTR" build -t dsvgoapp:0.1 .
+"$CTR" tag dsvgoapp:0.1 "${REGISTRY}/dsvgoapp:0.1"
+"$CTR" push "${REGISTRY}/dsvgoapp:0.1"
 echo "Pushed ${REGISTRY}/dsvgoapp:0.1"

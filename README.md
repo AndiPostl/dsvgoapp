@@ -7,7 +7,7 @@ This is an **assistance tool**, not legal advice.
 ## Requirements
 
 - Node.js 20+ (local development)
-- Docker / Docker Compose (container deployment)
+- **Podman** or Docker / Docker Compose (container deployment)
 
 ## Local development
 
@@ -24,22 +24,32 @@ The image is built from this repo using the multi-stage `Dockerfile` (Next.js **
 
 ### Build the image
 
+With **Podman** (recommended here):
+
+```bash
+podman build -t dsvgoapp:0.1 .
+```
+
+Or with Docker:
+
 ```bash
 docker build -t dsvgoapp:0.1 .
 ```
 
-### Run on another machine (Docker)
+### Run on another machine (Podman or Docker)
 
 Persist the GDPR register on the host so data survives container restarts:
 
 ```bash
 mkdir -p ./dsvgoapp-data
 
-docker run --rm \
+podman run --rm \
   -p 3000:3000 \
   -v "$(pwd)/dsvgoapp-data:/app/data" \
   dsvgoapp:0.1
 ```
+
+(`docker run …` works the same if you use Docker.)
 
 Then open **http://localhost:3000** (or `http://<server-ip>:3000` from another host).
 
@@ -54,53 +64,52 @@ Notes:
 
 ### Run with Docker Compose
 
-From the repository root:
+From the repository root (Docker: `docker compose`; Podman 4+: often `podman compose`):
 
 ```bash
-docker compose up --build -d
+podman compose up --build -d
 ```
 
-Data is stored in the named volume `dsvgoapp-data`. List volumes: `docker volume ls`.
+Data is stored in the named volume `dsvgoapp-data`. List volumes: `podman volume ls`.
 
-### Push to your Docker registry (tag 0.1)
+### Push to Docker Hub ([andreaspostl](https://hub.docker.com/repositories/andreaspostl)) — Podman
 
-Replace `REGISTRY` and any path prefix your registry requires (examples below).
+Image name on Hub: **`andreaspostl/dsvgoapp:0.1`** (same as `docker.io/andreaspostl/dsvgoapp:0.1`).
 
-1. Log in:
-
-   ```bash
-   docker login REGISTRY
-   ```
-
-2. Tag and push:
+1. Log in to Docker Hub (use your Hub username; password can be an [access token](https://hub.docker.com/settings/security)):
 
    ```bash
-   docker tag dsvgoapp:0.1 REGISTRY/dsvgoapp:0.1
-   docker push REGISTRY/dsvgoapp:0.1
+   podman login docker.io
    ```
 
-Or use the helper script (same steps, requires `docker login` first):
+2. Build, tag, and push (script uses **Podman** if installed, otherwise **Docker**):
+
+   ```bash
+   chmod +x scripts/docker-push.sh   # once
+   ./scripts/docker-push.sh
+   ```
+
+   The default registry is **`docker.io/andreaspostl`**. To push under another user:
+
+   ```bash
+   REGISTRY=docker.io/otheruser ./scripts/docker-push.sh
+   ```
+
+3. Manual equivalent:
+
+   ```bash
+   podman build -t dsvgoapp:0.1 .
+   podman tag dsvgoapp:0.1 docker.io/andreaspostl/dsvgoapp:0.1
+   podman push docker.io/andreaspostl/dsvgoapp:0.1
+   ```
+
+### Pull and run from Docker Hub
 
 ```bash
-chmod +x scripts/docker-push.sh   # once
-REGISTRY=ghcr.io/youruser ./scripts/docker-push.sh
-```
-
-Examples:
-
-| Registry type | Example `REGISTRY` / image |
-|---------------|----------------------------|
-| Docker Hub    | `docker.io/youruser` → `docker tag dsvgoapp:0.1 youruser/dsvgoapp:0.1` then `docker push youruser/dsvgoapp:0.1` |
-| GitHub GHCR   | `ghcr.io/youruser` → `docker tag dsvgoapp:0.1 ghcr.io/youruser/dsvgoapp:0.1` then `docker push ghcr.io/youruser/dsvgoapp:0.1` |
-| Private       | `registry.example.com/project` → match your org’s naming rules |
-
-### Pull and run from a registry
-
-```bash
-docker pull REGISTRY/dsvgoapp:0.1
+podman pull docker.io/andreaspostl/dsvgoapp:0.1
 
 mkdir -p ./dsvgoapp-data
-docker run --rm -p 3000:3000 -v "$(pwd)/dsvgoapp-data:/app/data" REGISTRY/dsvgoapp:0.1
+podman run --rm -p 3000:3000 -v "$(pwd)/dsvgoapp-data:/app/data" docker.io/andreaspostl/dsvgoapp:0.1
 ```
 
 ## Source repository (Git)

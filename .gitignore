@@ -44,3 +44,4 @@ next-env.d.ts
 /data/verzeichnis.json
 /data/processing-activities.json
 /data/*.migrated
+/data/*.bak

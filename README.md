@@ -79,6 +79,13 @@ Replace `REGISTRY` and any path prefix your registry requires (examples below).
    docker push REGISTRY/dsvgoapp:0.1
    ```
 
+Or use the helper script (same steps, requires `docker login` first):
+
+```bash
+chmod +x scripts/docker-push.sh   # once
+REGISTRY=ghcr.io/youruser ./scripts/docker-push.sh
+```
+
 Examples:
 
 | Registry type | Example `REGISTRY` / image |

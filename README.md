@@ -123,15 +123,16 @@ podman run --rm -p 3000:3000 -v "$(pwd)/dsvgoapp-data:/app/data" docker.io/andre
 
 ## Source repository (Git)
 
-Create an empty repository named **`dsvgoapp`** on your Git host (e.g. GitHub), then:
+Upstream: **https://github.com/AndiPostl/dsvgoapp**
+
+Clone:
 
 ```bash
-git remote add origin https://github.com/YOUR_USERNAME/dsvgoapp.git
-git branch -M main
-git push -u origin main
+git clone https://github.com/AndiPostl/dsvgoapp.git
+cd dsvgoapp
 ```
 
-Use SSH if you prefer: `git@github.com:YOUR_USERNAME/dsvgoapp.git`.
+SSH clone: `git@github.com:AndiPostl/dsvgoapp.git`.
 
 ## Project layout (high level)
 
